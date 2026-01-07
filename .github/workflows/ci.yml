@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f app/requirements.txt ]; then pip install -r app/requirements.txt; fi
+
+      - name: Check Python syntax
+        run: python -m py_compile app/app.py
+
+      - name: Start app (Gunicorn) and run healthcheck
+        run: |
+          cd app
+          # start gunicorn in background
+          gunicorn -w 2 -b 127.0.0.1:5000 app:app --daemon
+          sleep 2
+          curl -fS http://127.0.0.1:5000/healthz
+        env:
+          PYTHONUNBUFFERED: 1
