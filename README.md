@@ -29,6 +29,9 @@ This repository includes a GitHub Actions workflow that:
 
 See `.github/workflows/ci.yml` for details.
 
+- Screenshots
+![alt text](./assets/terminal.png)
+
 Troubleshooting
 
 - Make sure you run `docker compose` from the repository root so relative build paths resolve correctly.
